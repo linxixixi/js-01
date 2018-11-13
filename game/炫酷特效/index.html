@@ -1,0 +1,257 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+		<title>炫酷特效</title>
+	</head>
+
+	<body>
+		<select id="sel" style="display: block">
+			<option value="1:3:0:90:2:0">默认效果：大牛角</option>
+			<option value="10:3:0:10:2:3">小牛角</option>
+			<option value="300:1:8:9:2:0">闪光圈</option>
+			<option value="4:20:0:20:2:3">弹弹乐</option>
+			<option value="20:1:0:20:2:0">羽毛</option>
+		</select>
+		<canvas id="c" ></canvas>
+
+		<script>
+			var config = {
+				HornCount: 1,
+				circle: {
+					circleDis: 3,
+					beginRadius: 0,
+					maxRadius: 90,
+					lineWidth: 2,
+					delay: 0
+				}
+			}
+
+
+
+
+			var HornArr = [];
+			var cDom = document.getElementById("c");
+			var selDom = document.getElementById("sel")
+			var ctx = cDom.getContext("2d");
+			var interVal = null;
+			cDom.width = 900;
+			cDom.height = 450;
+
+
+			cDom.style.backgroundColor = "black"
+			cDom.onclick = function() {
+				var mouseOn = mousePos();
+				var domOn = domPos(cDom);
+				var x, y;
+				x = mouseOn.x - domOn.x;//现在位置
+				y = mouseOn.y - domOn.y;
+
+				for (var i = 0; i < config.HornCount; i++) {
+					HornArr[i].setMoveTo(x, y);
+				}
+			}
+			cDom.onmouseout = function() {
+				isMoveToPos = false;
+
+			}
+
+			selDom.onchange = function() {
+				var configArr = this.value.split(":");
+				console.log(configArr)
+				config.HornCount = configArr[0];
+				config.circle.circleDis = configArr[1];
+				config.circle.beginRadius = configArr[2];
+				config.circle.maxRadius = configArr[3];
+				config.circle.lineWidth = configArr[4];
+				config.circle.delay = configArr[5];
+		
+				HornArr = [];
+			}
+
+
+			interVal = setInterval(draw, 10);
+
+			function Horn(x, y, ctx) {
+				var beginPoint = {x: x, y: y, _x: 0, _y: 0};
+				var addX = 1;
+				var addY = 1;
+				var deg = (Math.random() * 2 + 3) * Math.random() > 0.5 ? 1 : -1;
+				var addDeg = 0.03;
+				var that = this;
+				var interval = null;
+				var intervalTime = 10;
+				var queue = [];
+				var isMoveToPos = false;
+				var moveToPos = {};
+
+				that.changeBeginPos = function() {
+					if (isMoveToPos) {
+						that.moveToPos();
+
+					} else {
+
+						that.moveRandom();
+					}
+				}
+
+				that.setMoveTo = function(x, y) {
+					isMoveToPos = true;
+					moveToPos.x = x;
+					moveToPos.y = y;
+				}
+				that.beginMove = function() {
+					interval = setInterval(that.changeBeginPos, intervalTime);
+				}
+
+				that.stopMove = function() {
+					clearInterval(interval);
+				}
+
+				that.addCircle = function(x, y) {
+					queue[queue.length] = new Circle(x, y, ctx);
+				}
+
+				that.moveRandom = function() {
+					deg += Math.random() * addDeg;
+					if (Math.random() > 0.995) {
+						addDeg = -addDeg;
+					}
+					var addX = Math.cos(deg) * config.circle.circleDis;
+					var addY = Math.sin(deg) * config.circle.circleDis;
+					if (addX + beginPoint.x < 0 || addX + beginPoint.x > cDom.width) {
+						deg = Math.PI - deg;
+						addDeg = -addDeg;
+						return;
+					}
+					if (addY + beginPoint.y < 0 || addY + beginPoint.y > cDom.height) {
+						deg = -deg;
+						addDeg = -addDeg;
+						return;
+					}
+					beginPoint.x += addX;
+					beginPoint.y += addY;
+					that.addCircle(beginPoint.x, beginPoint.y);
+				}
+				that.moveToPos = function() {
+					var addX = 0, addY = 0;
+					xDis = moveToPos.x - beginPoint.x;
+					yDis = moveToPos.y - beginPoint.y;
+
+					if (Math.abs(xDis) < 10 && Math.abs(yDis) < 10) {
+						isMoveToPos = false;
+					}
+					if (addX > 100) {
+						addX = xDis / 100
+					} else {
+						addX = xDis / 10
+					}
+
+					if (addY > 100) {
+						addY = yDis / 100
+					} else {
+						addY = yDis / 10
+					}
+
+					beginPoint.x += addX;
+					beginPoint.y += addY;
+
+					that.addCircle(beginPoint.x, beginPoint.y);
+				}
+
+				that.draw = function() {
+					for (var i in queue) {
+						if (queue[i].isDone()) {
+							queue.splice(i, 1);
+						} else {
+							queue[i].draw();
+						}
+					}
+				}
+			}
+
+			function Circle(x, y, ctx) {
+				var maxRadius = config.circle.maxRadius;
+				var radius = config.circle.beginRadius;
+				var lineWidth = config.circle.lineWidth;
+				var radiusDis = maxRadius - radius;
+				var delay = config.circle.delay;
+				var nowDelay = 0;
+				var isDone = false;
+				var style = {r: 0, g: 0, b: 0, a: 0};
+				style.r = parseInt(230 * Math.random()) + 25;
+				style.g = parseInt(230 * Math.random()) + 25;
+				style.b = parseInt(230 * Math.random()) + 25;
+				this.draw = function() {
+					if (radius <= maxRadius) {
+						if (radiusDis == 0) {
+							style.a = 0.8;
+						} else {
+							style.a = (maxRadius - radius) / radiusDis;
+						}
+
+						ctx.beginPath();
+						ctx.strokeStyle = "rgba(" + style.r + "," + style.g + "," + style.b + "," + style.a + ")";
+						ctx.lineWidth = lineWidth;
+						ctx.arc(x, y, radius, 0, 2 * Math.PI);
+						ctx.stroke();
+						if (nowDelay >= delay) {
+							radius++;
+							nowDelay = 0;
+						} else {
+							nowDelay++;
+						}
+
+					} else {
+						isDone = true;
+					}
+				}
+				this.isDone = function() {
+					return isDone;
+				}
+			}
+
+
+
+			function mousePos(evt) {
+				var xPos, yPos;
+				evt = evt || window.event;
+				if (evt.pageX) {
+					xPos = evt.pageX;
+					yPos = evt.pageY;
+				} else {
+					xPos = evt.clientX + document.body.scrollLeft - document.body.clientLeft;
+					yPos = evt.clientY + document.body.scrollTop - document.body.clientTop;
+				}
+				return {x: xPos, y: yPos};
+			}
+			function domPos(dom) {
+				return {x: dom.offsetLeft, y: dom.offsetTop}
+			}
+
+			function log(msg) {
+				console.log(msg);
+			}
+			function draw() {
+				if (HornArr.length == 0){
+					for (var i = 0; i < config.HornCount; i++) {
+						var x = Math.random() * cDom.width;
+						var y = Math.random() * cDom.height;
+						HornArr[i] = new Horn(x, y, ctx);
+						HornArr[i].beginMove();
+
+					}
+				}
+
+
+				ctx.clearRect(0, 0, cDom.width, cDom.width);
+				for (var i in HornArr) {
+					HornArr[i].draw();
+				}
+			}
+
+
+		</script>
+	</body>
+</html>

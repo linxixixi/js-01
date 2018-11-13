@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>简易打砖块</title>
+    <style>
+    *{margin: 0;padding: 0;list-style: none;}
+    #wrap{width: 100%;height: 100%;min-width: 660px;}
+    #box{width: 555px;height: 400px;background:#9999FF;margin:50px auto;position: relative;}
+    #rightBox{position: absolute;left: 560px;top: 0;}
+    #rightBox p{width: 104px;margin-bottom: 10px;}
+    #rightBox input{width: 60px;}
+    #ball{width: 8px;height: 8px;background: black;border-radius:50%;position: absolute;left: 252px;top: 371px;}
+    #racket{width: 50px;height: 6px;background: #FECE00;position: absolute;left: 230px;top: 380px;}
+    #ul1{padding-top:50px;position: absolute;}
+    #ul1 li{width: 50px;height: 16px;background:red;float: left;margin:5px 0 0 5px ;}
+    #start{cursor:pointer;background: yellow;}
+    </style>
+    <script type="text/javascript">
+    //凑合耍耍吧！哈哈
+    window.onload=function(){
+        var timer=null;
+        var bLeft=false;
+        var bRight=false;
+        var iSpeedX=6;
+        var iSpeedY=6;
+        var aPos=[];
+        var iLeft=0;
+        var num=0;
+        var bOk=false;
+        var oUl=document.getElementById('ul1');
+        var aLi=oUl.children;
+        var oRacket=document.getElementById('racket');
+        var oBall=document.getElementById('ball');
+        var oBox=document.getElementById('box');
+        var oStart=document.getElementById('start');
+        var iSpeed=document.getElementById('speed');
+        var iLife=document.getElementById('life');
+        var iScore=document.getElementById('score');
+        //获取Li位置
+        for (var i = 0; i < aLi.length; i++) {
+           aPos[i]={left:aLi[i].offsetLeft,top:aLi[i].offsetTop};
+        }
+        //Li布局转化
+        for (var i = 0; i < aLi.length; i++) {
+            aLi[i].style.left=aPos[i].left+'px';
+            aLi[i].style.top=aPos[i].top+'px';
+            aLi[i].style.position='absolute';
+            aLi[i].style.margin=0;
+            if (i>=0&&i<=9) {
+                aLi[i].style.background='#FFFF00';
+            }else if (i>=10&&i<=19) {
+                aLi[i].style.background='#FFB000';
+            }else if (i>=20&&i<=29) {
+                aLi[i].style.background='#FF8000';
+            }else if (i>=30&&i<=39) {
+                aLi[i].style.background='#FF4000';
+            }else if (i>=40&&i<=49) {
+                aLi[i].style.background='#FF0000';
+            }
+        }
+        function createLi(){
+            for (var i = 0; i < aPos.length; i++) {
+                var oLi=document.createElement('li');
+                oLi.style.left=aPos[i].left+'px';
+                oLi.style.top=aPos[i].top+'px';
+                oLi.style.position='absolute';
+                oLi.style.margin=0;
+                if (i>=0&&i<=9) {
+                    oLi.style.background='#FFFF00';
+                }else if (i>=10&&i<=19) {
+                    oLi.style.background='#FFB000';
+                }else if (i>=20&&i<=29) {
+                    oLi.style.background='#FF8000';
+                }else if (i>=30&&i<=39) {
+                    oLi.style.background='#FF4000';
+                }else if (i>=40&&i<=49) {
+                    oLi.style.background='#FF0000';
+                }
+                oUl.appendChild(oLi);
+            }
+            aLi=oUl.children;
+        }
+        oStart.onclick=function(){
+            // 判断字符串是否为数字 /^[0-9]+.?[0-9]*$/  //判断是否为整数
+            var re = /^[1-9]+[0-9]*]*$/;   
+            if (!re.test(iLife.value)) {
+                alert("生命只能为正整数！");
+                return false;
+            }
+            if (iLife.value>=1) {
+                oStart.style.display='none';
+                bOk=true;
+                startMove();
+            }
+            
+        };
+
+        //控制木板
+        document.onkeydown=function(ev){
+            var oEvent=ev||event;
+            if (bOk) {
+                switch(oEvent.keyCode){
+                    case 37:
+                        bLeft=true;
+                        break;
+                    case 39:
+                        bRight=true;
+                        break;
+                }
+                return false;
+            }
+        };
+        document.onkeyup=function(ev){
+            var oEvent=ev || event;
+            bLeft=bRight=false;
+            return false;
+        };
+
+        //木板小球随机初始化位置
+        rndPos();
+        function rndPos(){
+            var n=rnd(0,oBox.clientWidth-oRacket.offsetWidth);
+            oRacket.style.left=n+'px';
+            oBall.style.left=(n+22)+'px';
+            oBall.style.top=(371)+'px';
+        }
+
+        setInterval(function(){
+            if(bLeft){
+                iLeft=oRacket.offsetLeft-10;
+                if (iLeft<=0) {
+                    iLeft=0;
+                }else if (iLeft>=(oBox.clientWidth-oRacket.offsetWidth)) {
+                    iLeft=(oBox.clientWidth-oRacket.offsetWidth);
+                };
+                oRacket.style.left=iLeft+'px';
+            }
+            if (bRight) {
+                iLeft=oRacket.offsetLeft+10;
+                if (iLeft<=0) {
+                    iLeft=0;
+                }else if (iLeft>=(oBox.clientWidth-oRacket.offsetWidth)) {
+                    iLeft=(oBox.clientWidth-oRacket.offsetWidth);
+                };
+                oRacket.style.left=iLeft+'px';
+
+            }
+        },30);
+
+        //产生n-m随机数
+        function rnd(n,m){
+            return parseInt(Math.random()*(m-n)+n);
+        }
+
+        //小球移动
+        function startMove(){
+            clearInterval(timer);
+            if (bOk) {
+                function ballMove(){
+                    var l=oBall.offsetLeft+iSpeedX;
+                    var t=oBall.offsetTop-iSpeedY;
+                    
+                    if(t>=oBox.offsetHeight-oBall.offsetHeight){
+                        if (iLife.value==1) {
+                            iLife.value=3;
+                            oStart.style.display='block';
+                            clearInterval(timer);
+                            num=0;
+                            iScore.value=0;
+                            bLeft=bRight=false;
+                            bOk=false;
+                            rndPos();
+                            oUl.innerHTML='';
+                            createLi();
+                            alert('生命用光，请输入生命重新开始');
+                            return false;
+                        }else{
+                            alert('本局结束');
+                            iLife.value-=1;
+                            oStart.style.display='block';
+                            clearInterval(timer);
+                            bLeft=bRight=false;
+                            bOk=false;
+                            rndPos();
+                            return false;
+                        }
+                    }
+                    
+                    if(t<0){
+                        t=0;
+                        iSpeedY=-iSpeedY;
+                        iSpeedX=iSpeedX;    
+                    }
+                    
+                    if(l>oBox.clientWidth-oBall.offsetWidth){
+                        l=oBox.clientWidth-oBall.offsetWidth;
+                        iSpeedX=-iSpeedX;
+                        iSpeedY=iSpeedY;  
+                    }
+                    if(l<0){
+                        l=0;
+                        iSpeedX=-iSpeedX;
+                        iSpeedY=iSpeedY;   
+                    }
+                    
+                    oBall.style.left=l+'px';
+                    oBall.style.top=t+'px';
+                    if (collTest(oRacket,oBall)) {
+                        iSpeedY=-iSpeedY;
+                        iSpeedX=iSpeedX; 
+                    }
+                    for (var i = 0; i < aLi.length; i++) {
+                        if (collTest(aLi[i],oBall)) {
+                            num++;
+                            iScore.value=num;
+                            oUl.removeChild(aLi[i]);
+                            if (aLi.length==0) {
+                                alert('过关！进入下一关。');
+                                rndPos();
+                                createLi();
+                            }
+                            iSpeedY=-iSpeedY;
+                            iSpeedX=iSpeedX; 
+                        }
+                    }
+                }
+            
+                timer=setInterval(ballMove,30); 
+            } 
+        }
+        //碰撞检测
+        function collTest(obj,obj2){
+            var l1=obj.offsetLeft;
+            var r1=obj.offsetLeft+obj.offsetWidth;
+            var t1=obj.offsetTop;
+            var b1=obj.offsetTop+obj.offsetHeight;
+            
+            var l2=obj2.offsetLeft;
+            var r2=obj2.offsetLeft+obj2.offsetWidth;
+            var t2=obj2.offsetTop;
+            var b2=obj2.offsetTop+obj2.offsetHeight;
+
+            if(r1<l2 || l1>r2 || b1<t2 || t1>b2){
+                return false;
+            }else{
+                return true;    
+            }
+        }
+
+    };
+    </script>
+</head>
+<body>
+<div id="wrap">
+    
+    <div id="box">
+        <ul id="ul1">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <span id="ball"></span>
+        <div id="racket"></div>
+        <div id="rightBox">
+            <p><span>生命:</span><input id="life" type="text" value="3" /></p>
+            <p><span>得分:</span><input id="score" type="text" value="0" /></p>
+            <!-- <p><span>速度:</span><input id="speed" type="text" value="5" /></p> -->
+            <p>简单说明：</p>
+            <p>点击下面开始游戏！开始游戏后，用键盘←和→控制木板移动即可。</p>
+            <p id="start">点击此处开始</p>
+        </div>
+    </div>
+    
+</div>
+</body>
+</html>

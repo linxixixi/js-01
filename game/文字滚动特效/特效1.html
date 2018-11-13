@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>vTicker</title>
+<style type="text/css" media="all">
+body, html {
+	padding: 0;
+	margin: 0;
+}
+body {
+	background: #cccccc;
+}
+#news-container {
+	width: 400px;
+	margin: auto;
+	margin-top: 30px;
+	border: 1px solid #333333;
+}
+#news-container ul li div {
+	border: 1px solid #aaaaaa;
+	background: #ffffff;
+}
+</style>
+<script type="text/javascript" src="http://www.100sucai.com/img/demo/jquery.js"></script>
+<script type="text/javascript" src="http://www.100sucai.com/img/demo/802.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('#news-container').vTicker({ 
+		speed: 2000,
+		pause: 3000,
+		animation: 'fade',
+		mousePause: true,
+		showItems: 3
+	});
+    $('#news-container1').vTicker({
+		speed: 3000,
+		pause: 4000,
+		animation: 'fade',
+		mousePause: true,
+		showItems: 1
+	});
+});
+</script>
+</head>
+<body>
+<div style="overflow: hidden; position: relative; height: 114px;" id="news-container">
+  <ul style="position: absolute; margin: 0pt; padding: 0pt; top: 0px;">
+    <li style="margin: 0pt; padding: 0pt; height: 38px; display: list-item;">
+      <div> 4) jugbit.com jquery vticker more info more info more info more info more info </div>
+    </li>
+    <li style="margin: 0pt; padding: 0pt; height: 38px; display: list-item;">
+      <div> 1) Lorem ipsum dolor sit amet, porta at, imperdiet id neque. more info </div>
+    </li>
+    <li style="margin: 0pt; padding: 0pt; height: 38px; display: list-item;">
+      <div> 2) Lorem ipsum dolor sit amet, consectetur adipiscing elit. more info </div>
+    </li>
+    <li style="margin: 0pt; padding: 0pt; height: 38px;">
+      <div> 3) Lorem ipsum dolor sit amet more info more info more info more info </div>
+    </li>
+  </ul>
+</div>
+</body>
+</html>

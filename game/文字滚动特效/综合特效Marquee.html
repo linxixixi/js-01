@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			div{
+				border: 1px solid #fba;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<MARQUEE scrollAmount=10 behavior=alternate>文字来回滚动</MARQUEE>
+		</div>
+		
+		<div>
+			<MARQUEE style="LINE-HEIGHT: 120%; WRITING-MODE: tb-rl" scrollAmount=3 scrollDelay=0 direction=up width=200 height=150>
+			<P align=left>向右移动的竖排文字<BR>
+				向右移动的竖排文字<BR>
+					向右移动的竖排文字<BR>
+						向右移动的竖排文字</P>
+			</MARQUEE>
+		</div>
+		
+		<div>
+			<MARQUEE style="WIDTH: 250px; HEIGHT: 100px" scrollAmount=3 direction=up>
+				向上移动的文字<BR>向上移动的文字
+			</MARQUEE>
+		</div>
+		
+		<div>
+			<marquee onmouseover=this.stop() style="FONT-SIZE: 14pt; WIDTH: 223px; COLOR: #000000; HEIGHT: 124px" onmouseout=this.start() scrollAmount=1 scrollDelay=77 direction=up width=223 height=124>
+				<div><strong>鼠标放在框架内即停</strong></div>
+				<div>&nbsp;</div>
+			</marquee>
+		</div>
+		
+		<div>
+			<MARQUEE style="WIDTH: 250px; HEIGHT: 100px" scrollAmount=3 direction=down>
+				向下移动的文字<BR>向下移动的文字
+			</MARQUEE>
+		</div>
+		
+		<div>
+			<MARQUEE scrollAmount=2>从右向左滚动</MARQUEE>
+		</div>
+		
+		<div>
+			<MARQUEE scrollAmount=2 direction=right>从左向右滚动</MARQUEE>
+		</div>
+		
+		<div>
+			<MARQUEE style="WIDTH: 708px; HEIGHT: 150px" scrollAmount=2 direction=up behavior=alternate>上下反弹</MARQUEE>
+		</div>
+		
+		<div>
+			<MARQUEE style="WIDTH: 80%; HEIGHT: 100px" scrollAmount=2 direction=up behavior=alternate width="80%">
+				<MARQUEE direction=right>从左向右文字波浪式移动</MARQUEE>
+			</MARQUEE>
+		</div>
+		
+		<div>
+			<MARQUEE style="WIDTH: 80%; HEIGHT: 100px" scrollAmount=2 direction=up behavior=alternate width="80%">
+				<MARQUEE direction=right behavior=alternate>文字来回波浪式移动</MARQUEE>
+			</MARQUEE>
+			
+		</div>
+		
+		<div>
+			<MARQUEE behavior=alternate>
+				<MARQUEE scrollAmount=5 width=150>躲躲字，跑给你追</MARQUEE>
+			</MARQUEE>
+		</div>
+		
+		<div>
+			<MARQUEE direction=up behavior=alternate width=60 height=120>祝</MARQUEE>
+			<MARQUEE direction=up behavior=alternate width=60 height=80>大</MARQUEE>
+			<MARQUEE direction=up behavior=alternate width=60 height=120>家</MARQUEE>
+			<MARQUEE direction=up behavior=alternate width=60 height=80>永</MARQUEE>
+			<MARQUEE direction=up behavior=alternate width=60 height=120>远</MARQUEE>
+			<MARQUEE direction=up behavior=alternate width=60 height=80>幸</MARQUEE>
+			<MARQUEE direction=up behavior=alternate width=60 height=120>福</MARQUEE>
+		</div>
+		
+		<div>
+			<MARQUEE style="FILTER: wave(add=0,phase=1, freq=1,strength=15,color=.FFFFFF)" scrollAmount=2 scrollDelay=65 direction=up behavior=alternate height=80>
+				<CENTER>波浪字<BR>波浪字</CENTER>
+			</MARQUEE>
+		</div>
+		
+		<div>
+			
+		</div>
+		<div></div>
+		<div></div>	
+	</body>
+</html>
+
+
+<!--
+  a)scrollAmount。它表示速度，值越大速度越快。如果没有它，默认为6，建议设为1～3比较好。
+
+  b)width和height，表示滚动区域的大小，width是宽度，height是高度。特别是在做垂直滚动的时候，一定要设height的值。
+
+  c)direction。表示滚动的方向，默认为从右向左：←←←。可选的值有right、down、up。滚动方向分别为：right表示→→→，up表示↑，down表示↓。
+
+  d)scrollDelay，这也是用来控制速度的，默认为90，值越大，速度越慢。通常scrollDelay是不需要设置的。
+
+  e)behavior。用它来控制属性，默认为循环滚动，可选的值有alternate(交替滚动)、slide(幻灯片效果，指的是滚动一次，然后停止滚动)
+-->

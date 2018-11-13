@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <style>
+     .layer{
+            position:absolute !important;
+            -ms-user-select:none;
+            -webkit-user-select:none;
+        }
+        .surface{
+            position:absolute !important;
+            top:0px;
+            left:0px;
+        }
+        .ta{
+            border:1px solid #000;
+            background-color:rgba(255, 216, 0,0.7);
+        }
+        .btn{
+            border:1px solid white;
+            text-align:center;
+            background-color:#000;
+            color:#bbb;
+            cursor:pointer;
+        }
+        .jifen{
+            text-align:center;
+        }
+        .maskInfo{
+            color:white;
+            text-align:center;
+            font-size:16px;
+            line-height:100px;
+        }
+        .v{
+            display:none;
+        }
+    </style>
+</head>
+<body>
+    <div style="width:600px;height:500px;background-color:lightgray" class="surface" id="main"></div>
+    <script src="../common/js/jquery-1.9.0.js"></script>
+    <script src="gls-light-0.2.js"></script>
+    <script>
+        var leval = 1;
+        function indexOfMartix(arr, val) {
+            var res = -1;
+            for (var i = 0; i < arr.length; i++) {
+                var temp = arr[i];
+                if (JSON.stringify(temp) == JSON.stringify(val)) {
+                    res = i;
+                    break;
+                }
+            }
+            return res;
+        }
+        taCount = 2;
+        $maskInfo = null;
+        var mainSurface = new surface(document.getElementById("main"));
+        var $ds;
+        function createXYxis() {
+            var xAxisLayer = new layer({ x: 10, y: 480, width: 550, height: 10, baseColor: "blue" });
+            mainSurface.addLayer(xAxisLayer);
+            var yAxisLayer = new layer({ x: 68, y: 100, width: 5, height: 380, baseColor: "#000" });
+            mainSurface.addLayer(yAxisLayer);
+            mainSurface.addLayer( new layer({ x: 68, y: 80, width: 50, height: 20, cls:["num"],text:"1" }));
+            var yAxisLayer2 = new layer({ x: 268, y: 100, width: 5, height: 380, baseColor: "#000" });
+            mainSurface.addLayer(yAxisLayer2);
+            mainSurface.addLayer(new layer({ x: 268, y: 80, width: 50, height: 20, cls: ["num"], text: "2" }));
+            var yAxisLayer3 = new layer({ x: 468, y: 100, width: 5, height: 380, baseColor: "#000" });
+            mainSurface.addLayer(yAxisLayer3);
+            mainSurface.addLayer(new layer({ x: 468, y: 80, width: 50, height: 20, cls: ["num"], text: "3" }));
+            var ds = new layer({ x: 20, y: 10, width: 300, height: 20, baseColor: "#bbb" ,cls:['jifen']});
+            mainSurface.addLayer(ds);
+            $ds = ds.$dom;
+            var mask = new layer({ x: 0, y: 0, width: 600, height: 500, baseColor: "rgba(0,0,0,0.7)" ,cls:["v"] });
+            mainSurface.addLayer(mask);
+            var maskInfo = new layer({ x: 0, y: 200, width: 600, height: 100, baseColor: "rgba(0,0,0,0.9)", cls: ["v","maskInfo"],text:['sssss'] });
+            mainSurface.addLayer(maskInfo);
+            $maskInfo = maskInfo.$dom;
+            var maskAddLeval = new layer({ x: 250, y: 350, width: 100, height: 20, baseColor: "rgba(0,0,0,0.9)", cls: ["v", "btn"], text: ['增加难度'] });
+            mainSurface.addLayer(maskAddLeval);
+            maskAddLeval.$dom.click(function () {
+                leval++;
+                init(leval);
+            });
+        }
+        createXYxis();
+        var martix = [[{ x: 0, y: 0, w: 0,layer:null }, {}, {}], [], []];
+        var x1w = 100;
+        var x1l = 20;
+        var x1c = 10;
+        function initMartix(count) {
+            martix[0].length = 0;
+            var bw = 20;
+            var bh = 10;
+            for (var i = 1; i <= count; i++) {
+                w = 100 - (i * bw);
+                martix[0].push({x:x1l + (x1w - w) / 2,y:(480 - i * bh),w:w});
+            }
+            martix[0].reverse();
+        }
+        function drawTaInit() {
+            var taM = martix[0];
+            var c;
+            for (var i = 0; i < taM.length; i++) {
+                c = taM[i];
+                var ly = new layer({ x: c.x, y: c.y, width: c.w, height: 10, cls: ['ta'] });
+                mainSurface.addLayer(ly);
+                ly.dom.arrInx = 0;
+                ly.dom.x = c.x;
+                ly.dom.y = c.y;
+                ly.dom.w = c.w;
+                ly.dom.ly = c;
+            }
+        }
+        //initMartix(taCount);
+        //drawTaInit();
+        var ismove = false;
+        var $current;
+        function findMartixZone(x) {
+            if (x <= 160) {
+                return 0;
+            }
+            if (x >= 161 && x <= 320) {
+                return 1;
+            }
+            if (x > 320) {
+                return 2;
+            }
+        }
+        $("#main").on("mousedown", ".ta", function () {
+            ismove = true;
+            $current = null;
+            var arr = martix[this.arrInx];
+            if (indexOfMartix(arr, this.ly) == 0) {
+                $(this).animate({ "top": 50 });
+                $current = $(this);
+            }
+        });
+        $(document.body).mousemove(function (e) {
+            if (ismove&&$current) {
+                $current.css({ "left": e.pageX });
+            }
+        }).mouseup(function (e) {
+            if (!(ismove && $current)) {
+                return;
+            }
+            var index = findMartixZone(e.pageX);
+            var targetArr = martix[index];
+            if (targetArr.length == 0) {
+                move(470,index);
+            } else {
+                var length = targetArr.length;
+                var first = targetArr[0];
+                if ($current[0].w < first.w) {
+                    move(first.y - 10, index);
+                } else {
+                    $current.css({
+                        "left": $current[0].x, "top": $current[0].y
+                    });
+                    ismove = false;
+                    $current = null;
+                }
+            }
+        });
+        var ganArr = [68,268,468];
+        function move(y, index) {
+            ismove = false;
+            var targetX=ganArr[index]+2.5-$current[0].w/2;
+            $current.css({ "top": y,"left":targetX });
+            //处理原组
+            martix[$current[0].arrInx].shift();
+            $current[0].ly.x = targetX;
+            $current[0].ly.y = y;
+            martix[index].unshift($current[0].ly);
+            $current[0].arrInx = index;
+            $current[0].x = targetX;
+            $current[0].y = y;
+            $current = null;
+            displayNUM();
+        }
+        var num=0;
+        function displayNUM() {
+            $ds.text("当前级别"+leval+" 第" + (++num) + "步");
+            if (martix[2].length == taCount) {
+                $maskInfo.text("级别:"+leval+" 恭喜你赢了 共用"+num+"步");
+                $(".v").show();
+            }
+        }
+        function init(leval) {
+            $(".ta").remove();
+            $(".v").hide();
+            num = 0;
+            martix = [[{ x: 0, y: 0, w: 0, layer: null }, {}, {}], [], []];
+            initMartix(leval);
+            taCount = leval;
+            drawTaInit();
+        }
+        init(leval);
+    </script>
+</body>
+</html>

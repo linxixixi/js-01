@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			.dandelion .smalldan {
+			width: 36px;
+			height: 60px;
+			left: 21px;
+			background-position: 0 -90px;
+			border: 0px solid red;
+			}
+			.dandelion span {
+			-webkit-animation: ball-x 3s linear 2s infinite;
+			-webkit-transform-origin: bottom center;
+			}
+			.dandelion span {
+			display: block;
+			position: absolute;
+			bottom: 0px;
+			background-image: url(pgy.png);
+			background-repeat: no-repeat;
+			_background: none;
+			}
+			.dandelion .bigdan {
+			width: 64px;
+			height: 115px;
+			left: 47px;
+			background-position: -86px -36px;
+			border: 0px solid red;
+			}
+			@-webkit-keyframes ball-x {
+			    0% { -webkit-transform:rotate(0deg);}
+			   20% { -webkit-transform:rotate(5deg); }
+			   40% { -webkit-transform:rotate(0deg);}
+			   60% { -webkit-transform:rotate(-5deg);}
+			   80% { -webkit-transform:rotate(0deg);}
+			   100% { -webkit-transform:rotate(0deg);}
+			}
+		</style>
+	</head>
+	<body>
+		
+		<div class="dandelion">
+			<span class="smalldan"></span>
+			<span class="bigdan"></span>
+		</div>
+	</body>
+</html>

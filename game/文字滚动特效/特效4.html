@@ -1,0 +1,42 @@
+<html>
+<title>单条公告间歇性向上滚动的特效</title>
+<style>
+	*{padding:0;margin:0;}
+	#wrap li{height:30px;line-height:30px;}
+</style>
+<body>
+<div id="wrap" style="height:60px;overflow:hidden;background:#eee" >  <!-- 注意这里的高度值要匹配 -->
+	<ul id="box1">
+		<li>1、100素材网http://www.100sucai.com(09-09:15)</li>
+		<li>2、100素材网http://www.100sucai.com(09-09:15)</li>
+		<li>3、100素材网http://www.100sucai.com(09-09:15)</li>
+	</ul>
+	<ul id="box2">
+	</ul>
+</div>
+<!-- -->
+ <div id="cc"> </div>
+</body>
+ <script type="text/javascript">
+	var $$=function(id){return document.getElementById(id);}
+	var start;
+	$$('box2').innerHTML=$$('box1').innerHTML;
+	function roll(){
+		wrap.scrollTop++;
+		$$('cc').innerHTML=wrap.scrollTop;   //无用，纯粹做参考数值
+		 if($$('box1').offsetHeight-wrap.scrollTop>0){  //尚未滚动到第二部分的顶部位置时
+			 if(wrap.scrollTop%wrap.offsetHeight!=0)  //
+			 {
+				return(setTimeout(roll,20));	 //20毫秒即递归一次
+			 }
+			 else{						//当滚动的累计距离达到显示域高度的倍数时
+				return(setTimeout(roll,2000));  //等待2秒才递归调用
+			 }
+		 }
+		 else{
+				setTimeout("$$('wrap').scrollTop=0;roll()",2000);
+			}
+	}
+	setTimeout(roll,2000)
+ </script>
+ </html>
